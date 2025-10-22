@@ -107,13 +107,13 @@ EOF
 
 # -------- CONFIGURE NGINX --------
 echo "[INFO] Configuring NGINX reverse proxy..."
-ssh -i "$SSH_KEY_PATH" "$SSH_USER@$SERVER_IP" <<EOF
+ssh -i "$SSH_KEY_PATH" "$SSH_USER@$SERVER_IP" <<'EOF'
 set -e
 sudo bash -c 'cat > /etc/nginx/conf.d/hng13_app.conf' <<CFG
 server {
     listen 80;
     server_name _;
-
+    
     location / {
         proxy_pass http://127.0.0.1:8080;
         proxy_set_header Host $host;
