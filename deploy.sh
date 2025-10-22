@@ -16,13 +16,15 @@ error_exit() {
 }
 
 # -------- VARIABLES --------
-REPO_URL="https://github.com/waleboluwatife/hng13-stage1-devops.git"
-BRANCH="main"
-GITHUB_PAT=${GITHUB_PAT:-""}
-SSH_USER="ec2-user"
-SERVER_IP="51.21.190.241"
-SSH_KEY_PATH="C:/Users/waleb/Desktop/Hng13-stage0-devops/hng-key.pem"
-APP_PORT=80
+read -p "Git repo URL: " REPO_URL
+read -p "Branch (default: main): " BRANCH
+BRANCH=${BRANCH:-main}
+read -p "Server IP: " SERVER_IP
+read -p "SSH username: " SSH_USER
+read -p "Path to PEM key: " SSH_KEY_PATH
+read -p "App port (default: 80): " APP_PORT
+APP_PORT=${APP_PORT:-80}
+
 REMOTE_DIR="hng13-stage1-deploy"
 
 # -------- CHECK REQUIREMENTS --------
