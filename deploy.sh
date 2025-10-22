@@ -109,7 +109,7 @@ EOF
 echo "[INFO] Configuring NGINX reverse proxy..."
 ssh -i "$SSH_KEY_PATH" "$SSH_USER@$SERVER_IP" <<'EOF'
 set -e
-sudo bash -c 'cat > /etc/nginx/conf.d/hng13_app.conf' <<CFG
+sudo bash -c 'cat > /etc/nginx/conf.d/hng13_app.conf' <<'CFG'
 server {
     listen 80;
     server_name _;
