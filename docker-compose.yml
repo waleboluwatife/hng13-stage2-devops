@@ -1,10 +1,51 @@
-version: "3.9"
+version: "3.8"
+
+# This Compose file defines a blue/green deployment pattern for a Node.js service hidden behind an Nginx reverse proxy.  The configuration is fully parameterised via a `.env` file.  Two application containers are started (blue and green) on separate host ports (8081 and 8082 by default) and an Nginx container listens on port 8080.  The Nginx entrypoint script selects either the blue or green backend based on the ACTIVE_POOL environment variable and configures upstream servers appropriately.  
 
 services:
-  web:
+  nginx:
     image: nginx:latest
-    container_name: hng_stage1_web
+    container_name: nginx
     ports:
       - "8080:80"
+    # Environment variables passed into Nginx to determine which backend instance should receive traffic. ACTIVE_POOL must be either "blue" or "green" and PORT should reflect the port exposed by the Node.js app inside its container (defaults to 80).  These values are substituted into the template configuration at runtime by start_nginx.sh.
+    environment:
+      - ACTIVE_POOL=${ACTIVE_POOL}
+      - PORT=${PORT}
     volumes:
-      - ./index.html:/usr/share/nginx/html/index.html
+      # Mount only the directory containing the Nginx configuration templates
+      - ./nginx/templates:/etc/nginx/templates:ro
+      # Mount the custom entrypoint script which builds the final config
+      - ./nginx/start_nginx.sh:/start_nginx.sh:ro
+    depends_on:
+      - app_blue
+      - app_green
+    # Use the custom entrypoint script to generate the Nginx configuration and then start Nginx in the foreground.  Because /bin/sh is used, the environment variables defined above are available to the script.
+    entrypoint: ["/bin/sh", "/start_nginx.sh"]
+
+  app_blue:
+    image: ${BLUE_IMAGE}
+    container_name: app_blue
+    # Expose the internal application port (default 80) on host port 8081.  The
+    # Node.js service listens on $PORT inside the container and the container's
+    # environment exposes APP_POOL and RELEASE_ID for identification.
+    ports:
+      - "8081:${PORT}"
+    environment:
+      - APP_POOL=blue
+      - RELEASE_ID=${RELEASE_ID_BLUE}
+      - PORT=${PORT}
+
+  app_green:
+    image: ${GREEN_IMAGE}
+    container_name: app_green
+    ports:
+      - "8082:${PORT}"
+    environment:
+      - APP_POOL=green
+      - RELEASE_ID=${RELEASE_ID_GREEN}
+      - PORT=${PORT}
+
+networks:
+  default:
+    name: stage2_net
