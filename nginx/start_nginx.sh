@@ -1,16 +1,12 @@
 #!/bin/sh
 #
 # Entry point script for the Nginx container in the Stage‑2 blue/green
-# deployment.  This script selects the appropriate Nginx configuration
-# template based on the ACTIVE_POOL environment variable, substitutes
-# environment variables into the template, and starts Nginx in the
-# foreground.  The following environment variables influence behaviour:
+# deployment.  This script selects the appropriate Nginx configuration template based on the ACTIVE_POOL environment variable, substitutes environment variables into the template, and starts Nginx in the foreground.  The following environment variables influence behaviour:
 #   ACTIVE_POOL – either "blue" or "green" (defaults to blue)
 #   PORT        – port that the app listens on inside its container
-#
-# The templates live in /etc/nginx/templates and are mounted read‑only
-# via the Compose file.  The generated configuration is written to
-# /etc/nginx/conf.d/default.conf.
+
+# The templates live in /etc/nginx/templates and are mounted read‑only via the Compose file.  The generated configuration is written to /etc/nginx/conf.d/default.conf.
+
 set -eu
 
 # Determine which configuration template to use.  Default to blue
