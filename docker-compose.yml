@@ -1,5 +1,3 @@
-version: "3.8"
-
 # This Compose file defines a blue/green deployment pattern for a Node.js service hidden behind an Nginx reverse proxy.  The configuration is fully parameterised via a `.env` file.  Two application containers are started (blue and green) on separate host ports (8081 and 8082 by default) and an Nginx container listens on port 8080.  The Nginx entrypoint script selects either the blue or green backend based on the ACTIVE_POOL environment variable and configures upstream servers appropriately.  
 
 services:

@@ -12,9 +12,9 @@ set -eu
 # Determine which configuration template to use.  Default to blue
 # primary if ACTIVE_POOL is unset.
 ACTIVE="${ACTIVE_POOL:-blue}"
-TEMPLATE="/etc/nginx/templates/nginx-${ACTIVE}.conf.template"
+TEMPLATE_PATH="/etc/nginx/templates/nginx-${ACTIVE}.conf.template"
 
-if [ ! -f "$TEMPLATE" ]; then
+if [ ! -f "$TEMPLATE_PATH" ]; then
   echo "[start_nginx] Missing template: $TEMPLATE" >&2
   exit 1
 fi
@@ -23,7 +23,7 @@ fi
 # envsubst below.
 export PORT="${PORT:-80}"
 
-echo "[start_nginx] Generating Nginx configuration using $TEMPLATE (PORT=$PORT)"
+echo "[start_nginx] Generating Nginx configuration using $TEMPLATE_PATH (PORT=$PORT)"
 
 # Create the output directory if it doesn't exist.
 mkdir -p /etc/nginx/conf.d
@@ -34,7 +34,7 @@ mkdir -p /etc/nginx/conf.d
 # occurrences of '__PORT__' with the value of $PORT.  All other
 # variables (e.g. $host, $remote_addr) remain intact for Nginx to
 # evaluate at runtime.
-sed "s/__PORT__/$PORT/g" "$TEMPLATE" > /etc/nginx/conf.d/default.conf
+sed "s/__PORT__/$PORT/g" "$TEMPLATE_PATH" > /etc/nginx/conf.d/default.conf
 
 # Display the generated config for debugging.
 echo "[start_nginx] Rendered /etc/nginx/conf.d/default.conf:" >&2
