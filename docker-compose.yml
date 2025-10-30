@@ -15,6 +15,7 @@ services:
       - ./nginx/templates:/etc/nginx/templates:ro
       # Mount the custom entrypoint script which builds the final config
       - ./nginx/start_nginx.sh:/start_nginx.sh:ro
+      - logs_volume:/var/log/nginx
     depends_on:
       - app_blue
       - app_green
@@ -43,6 +44,26 @@ services:
       - APP_POOL=green
       - RELEASE_ID=${RELEASE_ID_GREEN}
       - PORT=${PORT}
+
+  alert_watcher:
+    build:
+      context: ./watcher
+    container_name: alert_watcher
+    environment:
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+      - ACTIVE_POOL=${ACTIVE_POOL}
+      - ERROR_RATE_THRESHOLD=${ERROR_RATE_THRESHOLD}
+      - WINDOW_SIZE=${WINDOW_SIZE}
+      - ALERT_COOLDOWN_SEC=${ALERT_COOLDOWN_SEC}
+      - MAINTENANCE_MODE=${MAINTENANCE_MODE}
+    volumes:
+      - logs_volume:/var/log/nginx:ro
+    depends_on:
+      - nginx
+
+volumes:
+  logs_volume:
+    driver: local
 
 networks:
   default:

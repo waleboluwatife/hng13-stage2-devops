@@ -20,6 +20,20 @@ upstream backend {
     server app_green:__PORT__ backup;
 }
 
+log_format hng_stage3
+  '$remote_addr '
+  '$time_local '
+  'pool=$upstream_http_x_app_pool '
+  'release=$upstream_http_x_release_id '
+  'status=$status '
+  'upstream_status=$upstream_status '
+  'upstream_addr=$upstream_addr '
+  'req_time=$request_time '
+  'upstream_time=$upstream_response_time '
+  '"$request"';
+
+access_log /var/log/nginx/access_stage3.log hng_stage3;
+
 server {
     listen 80;
     server_name _;

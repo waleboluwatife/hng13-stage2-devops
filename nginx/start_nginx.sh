@@ -42,4 +42,4 @@ cat /etc/nginx/conf.d/default.conf >&2
 
 # Start nginx in the foreground.  Use the provided entrypoint syntax so
 # that signals are properly forwarded.
-exec nginx -g 'daemon off;'
+exec nginx -g 'daemon off;'curl ifconfig.me
